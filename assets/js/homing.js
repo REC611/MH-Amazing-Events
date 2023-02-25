@@ -1,10 +1,10 @@
-let htmlEvents = "";
-for(let event of data.events )
-{
-   htmlEvents += `<div class="card">
-    <img src="${event.image}" alt="">
-    <h5>${event.name}</h5>
-    <p>${event.description}</p>
-    <p>$${event.price}</p>`;
+// ALL CARDS
+function buildHTMLEventsCardList(eventsData){
+    let htmlEventsList = "";
+    for (let event of eventsData.events) {
+         htmlEventsList += buildHTMLEventCard(event);      
+    }
+    return htmlEventsList;
 }
-//  console.log(htmlEvents);
+let contenedorCard = document.getElementById("card-id");
+contenedorCard.innerHTML = buildHTMLEventsCardList(data);
