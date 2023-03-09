@@ -28,3 +28,9 @@ td{
 .barraTitulo{
     border: 1.5px black solid !important;
 }
+@media only screen and (max-width:989px) {
+    .logoAE {
+        display: flex !important;
+        justify-content: center !important;
+
+    }

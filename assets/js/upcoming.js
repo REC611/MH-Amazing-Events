@@ -29,7 +29,7 @@ search.addEventListener('submit', e => {
     let futureArray = [];
 
     for (let event of filters) {
-        let eventDate = new Date(event.Date);
+        let eventDate = new Date(event.date);
         if (eventDate > currentDate) {
             futureFilters += buildHTMLEventCard(event);
             futureArray.push(futureFilters);
