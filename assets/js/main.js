@@ -1,0 +1,25 @@
+// PRINCIPAL FUNCTION
+function buildHTMLEventCard(eventData) {
+  return `<div class="card m-5" style="width: 20rem;">
+     <img src="${eventData.image}" class="card-img-top img-fluid" alt="Food_Fair">
+     <div class="card-body d-flex flex-column">
+      <h5 class="card-title text-center">${eventData.name}</h5>
+      <p class="card-text text-center">${eventData.description}</p>
+      <div class="mt-auto">
+        <div class="d-flex justify-content-between">
+          <p class="card-text">Price $${eventData.price}</p>
+          <a href="./details.html?id=${eventData._id}" class="btn btn-secondary">Ver mas</a>
+        </div>
+      </div>
+    </div>
+   </div>`
+}
+
+// // CHECKBOX FILTER FOR HTML FUNCTION
+// function filterCheck(eventData){
+
+//   return `<div class="form-check form-check-inline">
+//   <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="${event.category}">
+//   <label class="form-check-label" for="inlineCheckbox1">${event.category}</label>
+// </div>`;
+// }
