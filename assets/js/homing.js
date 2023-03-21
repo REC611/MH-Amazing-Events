@@ -1,27 +1,67 @@
-// ALL CARDS
-function buildHTMLEventsCardList(eventsData) {
-    let htmlEventsList = "";
-    for (let eventsData of data.events) {
-        htmlEventsList += buildHTMLEventCard(eventsData);
+let urlApi = "https://mindhub-xj03.onrender.com/api/amazing";
+async function getEventsData(urlApi) {
+    try {
+        const response = await fetch(urlApi);
+        const data = await response.json();
+        console.log(data);
+
+        buildHTMLEventsCardList(data);
+        getCategories(data);
+
+
+        let input = document.getElementById('form1');
+        let checkboxes = document.querySelectorAll('input[type=checkbox]');
+        let valuesChecked = [];
+        let inputData = "";
+
+        input.addEventListener("input", (event) => {
+            inputData = event.target.value.trim().toLowerCase();
+
+            filtersApply(data, inputData, valuesChecked);
+        });
+
+        checkboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', (event) => {
+                if (event.target.checked) {
+                    valuesChecked.push(event.target.value);
+                    console.log(valuesChecked);
+                } else {
+                    let indexH = valuesChecked.indexOf(event.target.value);
+                    if (indexH !== -1) {
+                        valuesChecked.splice(indexH, 1);
+                    }
+                }
+
+                filtersApply(data, inputData, valuesChecked);
+            });
+        });
+
+
+    } catch (error) {
+        console.log(error)
     }
-    return htmlEventsList;
 }
-let contenedorCard = document.getElementById("card-id");
-contenedorCard.innerHTML = buildHTMLEventsCardList(data);
+getEventsData(urlApi);
+// ALL CARDS
+function buildHTMLEventsCardList(data) {
+    let htmlEventsList = "";
+    for (let event of data.events) {
+        htmlEventsList += buildHTMLEventCard(event);
+    }
+    let contenedorCard = document.getElementById("card-id");
+    contenedorCard.innerHTML = htmlEventsList;
+}
 
 // CHECKBOX and SEARCH
-function getCategories(events) {
+
+function getCategories(data) {
     let categories = [];
-    events.forEach(event => {
+    data.events.forEach(event => {
         if (!categories.includes(event.category)) {
             categories.push(event.category);
         }
     });
-    return categories;
-}
-let categories = getCategories(data.events);
-
-function showCategories(categories) {
+    
     contenedorCheckbox = "";
     categories.forEach(category => {
         contenedorCheckbox += `<div class="form-check form-check-inline">
@@ -30,35 +70,12 @@ function showCategories(categories) {
       </div>
         `
     })
-    return contenedorCheckbox;
+    return document.getElementById('containerChecks').innerHTML = contenedorCheckbox;
+
+
 }
-document.getElementById('containerChecks').innerHTML = showCategories(categories);
 
-let input = document.getElementById('form1');
-let checkboxes = document.querySelectorAll('input[type=checkbox]');
-let valuesChecked = [];
-let inputData = "";
-
-input.addEventListener("input", (event) => {
-    inputData = event.target.value.trim().toLowerCase();
-    filtersApply();
-});
-
-checkboxes.forEach(checkbox => {
-    checkbox.addEventListener('change', (event) => {
-        if (event.target.checked) {
-            valuesChecked.push(event.target.value);
-        } else {
-            let indexH = valuesChecked.indexOf(event.target.value);
-            if (indexH !== -1) {
-                valuesChecked.splice(indexH, 1);
-            }
-        }
-        filtersApply();
-    });
-});
-
-function filtersApply() {
+function filtersApply(data, inputData, valuesChecked) {
     let filtedEvent = data.events.filter(event => {
         let nameMatch = event.name.toLowerCase().includes(inputData);
         let descriptionMatch = event.description.toLowerCase().includes(inputData);
@@ -75,6 +92,5 @@ function filtersApply() {
     } else {
         cardcheckbox = "Your search returned no results";
     }
-    document.getElementById('card-id').innerHTML = cardcheckbox;
+    return document.getElementById('card-id').innerHTML = cardcheckbox;
 }
-

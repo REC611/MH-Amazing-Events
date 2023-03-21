@@ -1,3 +1,47 @@
+let urlApi = "https://mindhub-xj03.onrender.com/api/amazing";
+async function getEventsData(urlApi) {
+    try {
+        const response = await fetch(urlApi);
+        const data = await response.json();
+        console.log(data);
+
+        buildHTMLPastEventsCardList(data);
+        getCategories(data);
+
+        let pastEvents = getPastEvents(data);
+        let input = document.getElementById('form1');
+        let checkboxes = document.querySelectorAll('input[type=checkbox]');
+        let valuesChecked = [];
+        let inputData = "";
+
+        input.addEventListener("input", (event) => {
+            inputData = event.target.value.trim().toLowerCase();
+
+            filtersApply(pastEvents, inputData, valuesChecked);
+        });
+
+        checkboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', (event) => {
+                if (event.target.checked) {
+                    valuesChecked.push(event.target.value);
+                    console.log(valuesChecked);
+                } else {
+                    let indexH = valuesChecked.indexOf(event.target.value);
+                    if (indexH !== -1) {
+                        valuesChecked.splice(indexH, 1);
+                    }
+                }
+
+                filtersApply(pastEvents, inputData, valuesChecked);
+            });
+        });
+
+
+    } catch (error) {
+        console.log(error)
+    }
+}
+getEventsData(urlApi);
 // PAST EVENTS
 function getPastEvents(eventsData) {
     let paEventsList = [];
@@ -10,35 +54,30 @@ function getPastEvents(eventsData) {
     }
     return paEventsList;
 }
-let pastEvents = getPastEvents(data);
 
-function buildHTMLPastEventsCardList(eventsData) {
+function buildHTMLPastEventsCardList(data) {
     let htmlEventsList = "";
-    let currentDate = new Date(eventsData.currentDate);
-    for (let event of eventsData.events) {
+    let currentDate = new Date(data.currentDate);
+    for (let event of data.events) {
         let eventDate = new Date(event.date);
         if (eventDate < currentDate) {
             htmlEventsList += buildHTMLEventCard(event);
         }
     }
-    return htmlEventsList;
+    let contenedorCard = document.getElementById("card-id");
+    contenedorCard.innerHTML = htmlEventsList;
 }
-let contenedorCard = document.getElementById("card-id");
-contenedorCard.innerHTML = buildHTMLPastEventsCardList(data);
+
 
 // CHECKBOX and SEARCH
-function getCategories(events) {
+function getCategories(data) {
     let categories = [];
-    events.forEach(event => {
+    data.events.forEach(event => {
         if (!categories.includes(event.category)) {
             categories.push(event.category);
         }
     });
-    return categories;
-}
-let categories = getCategories(pastEvents);
 
-function showCategories(categories) {
     contenedorCheckbox = "";
     categories.forEach(category => {
         contenedorCheckbox += `<div class="form-check form-check-inline">
@@ -47,35 +86,10 @@ function showCategories(categories) {
       </div>
         `
     })
-    return contenedorCheckbox;
+    return document.getElementById('containerChecks').innerHTML = contenedorCheckbox
 }
-document.getElementById('containerChecks').innerHTML = showCategories(categories);
 
-let input = document.getElementById('form1');
-let checkboxes = document.querySelectorAll('input[type=checkbox]');
-let valuesChecked = [];
-let inputData = "";
-
-input.addEventListener("input", (event) => {
-    inputData = event.target.value.trim().toLowerCase();
-    filtersApply();
-});
-
-checkboxes.forEach(checkbox => {
-    checkbox.addEventListener('change', (event) => {
-        if (event.target.checked) {
-            valuesChecked.push(event.target.value);
-        } else {
-            let indexH = valuesChecked.indexOf(event.target.value);
-            if (indexH !== -1) {
-                valuesChecked.splice(indexH, 1);
-            }
-        }
-        filtersApply();
-    });
-});
-
-function filtersApply() {
+function filtersApply(pastEvents, inputData, valuesChecked) {
     let filtedEvent = pastEvents.filter(event => {
         let nameMatch = event.name.toLowerCase().includes(inputData);
         let descriptionMatch = event.description.toLowerCase().includes(inputData);

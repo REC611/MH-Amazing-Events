@@ -1,4 +1,4 @@
-// DATA JSON
+/* // DATA JSON
 let data = 
 {
     "currentDate": "2022-01-01",
@@ -173,3 +173,4 @@ let data =
       }
     ]
   }
+ */
